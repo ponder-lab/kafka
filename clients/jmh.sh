@@ -31,9 +31,9 @@ fi
 gradleCmd="${gradlew_dir}/gradlew"
 libDir="${base_dir}/build/libs"
 
-echo "running gradlew :clients:clean :clients:shadowJar"
+echo "running gradlew :clients:clean :clients:testJar2"
 
-$gradleCmd  :clients:clean :clients:shadowJar
+$gradleCmd  :clients:clean :clients:testJar2
 
 echo "gradle build done"
 
