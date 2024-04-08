@@ -70,8 +70,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class SensorTest {
 
-    @Param({"10", "50", "100", "500", "1000", "5000", "10000"})
+    @Param({"10", "50", "100", "500", "1000", "5000"})
     private int threadCount;
+    
+    @Param({"20", "100", "200", "500"})
+    private int max_j;
+    
+    @Param({"100", "500"})
+    private int numSamples;
 
     private static final MetricConfig INFO_CONFIG = new MetricConfig().recordLevel(Sensor.RecordingLevel.INFO);
     private static final MetricConfig DEBUG_CONFIG = new MetricConfig().recordLevel(Sensor.RecordingLevel.DEBUG);
@@ -208,7 +214,7 @@ public class SensorTest {
             // decreasing the value of time window make SampledStat always record the given value
             .timeWindow(1, TimeUnit.MILLISECONDS)
             // increasing the value of samples make SampledStat store more samples
-            .samples(100));
+            .samples(numSamples));
         final Sensor sensor = metrics.sensor("sensor");
 
         assertTrue(sensor.add(metrics.metricName("test-metric", "test-group"), new Rate()));
@@ -222,7 +228,7 @@ public class SensorTest {
                 workers.add(service.submit(() -> {
                     try {
                         assertTrue(latch.await(5, TimeUnit.SECONDS));
-                        for (int j = 0; j != 20; ++j) {
+                        for (int j = 0; j != max_j; ++j) {
                             sensor.record(j * index, System.currentTimeMillis() + j, false);
                             sensor.checkQuotas();
                         }
