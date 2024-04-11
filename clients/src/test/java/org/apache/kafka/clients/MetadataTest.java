@@ -1325,7 +1325,6 @@ public class MetadataTest {
 
         // Setup 6 threads, where 3 are updating metadata & 3 are reading snapshot/cluster.
         // Metadata will be updated with higher # of nodes, partition-counts, leader-epoch.
-        // int numThreads = 6;
         ExecutorService service = Executors.newFixedThreadPool(numThreads);
         CountDownLatch allThreadsDoneLatch = new CountDownLatch(numThreads);
         CountDownLatch atleastMetadataUpdatedOnceLatch = new CountDownLatch(1);
