@@ -1333,28 +1333,30 @@ public class MetadataTest {
         for (int i = 0; i < numThreads; i++) {
             final int id = i + 1;
             service.execute(() -> {
-                if (id % 2 == 0) { // Thread to update metadata.
-                    String oldClusterId = "clusterId";
-                    int nNodes = oldNodeCount + id;
-                    Map<String, Integer> newTopicPartitionCounts = new HashMap<>();
-                    newTopicPartitionCounts.put(topic1, oldPartitionCount + id);
-                    newTopicPartitionCounts.put(topic2, oldPartitionCount + id);
-                    MetadataResponse newMetadataResponse =
-                        RequestTestUtils.metadataUpdateWithIds(oldClusterId, nNodes, Collections.emptyMap(), newTopicPartitionCounts, _tp -> oldLeaderEpoch + id, topicIds);
-                    metadata.updateWithCurrentRequestVersion(newMetadataResponse, true, time.milliseconds());
-                    atleastMetadataUpdatedOnceLatch.countDown();
-                } else { // Thread to read metadata snapshot, once its updated
-                    try {
-                        if (!atleastMetadataUpdatedOnceLatch.await(5, TimeUnit.MINUTES)) {
-                            assertFalse(true, "Test had to wait more than 5 minutes, something went wrong.");
-                        }
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    newSnapshot.set(metadata.fetchMetadataSnapshot());
-                    newCluster.set(metadata.fetch());
-                }
-                allThreadsDoneLatch.countDown();
+            	for (int j = 0; j < 100; j++){
+		        if (id % 2 == 0) { // Thread to update metadata.
+		            String oldClusterId = "clusterId";
+		            int nNodes = oldNodeCount + id;
+		            Map<String, Integer> newTopicPartitionCounts = new HashMap<>();
+		            newTopicPartitionCounts.put(topic1, oldPartitionCount + id);
+		            newTopicPartitionCounts.put(topic2, oldPartitionCount + id);
+		            MetadataResponse newMetadataResponse =
+		                RequestTestUtils.metadataUpdateWithIds(oldClusterId, nNodes, Collections.emptyMap(), newTopicPartitionCounts, _tp -> oldLeaderEpoch + id, topicIds);
+		            metadata.updateWithCurrentRequestVersion(newMetadataResponse, true, time.milliseconds());
+		            atleastMetadataUpdatedOnceLatch.countDown();
+		        } else { // Thread to read metadata snapshot, once its updated
+		            try {
+		                if (!atleastMetadataUpdatedOnceLatch.await(5, TimeUnit.MINUTES)) {
+		                    assertFalse(true, "Test had to wait more than 5 minutes, something went wrong.");
+		                }
+		            } catch (InterruptedException e) {
+		                throw new RuntimeException(e);
+		            }
+		            newSnapshot.set(metadata.fetchMetadataSnapshot());
+		            newCluster.set(metadata.fetch());
+		        }
+		        allThreadsDoneLatch.countDown();
+	    	}
             });
         }
         if (!allThreadsDoneLatch.await(5, TimeUnit.MINUTES)) {
