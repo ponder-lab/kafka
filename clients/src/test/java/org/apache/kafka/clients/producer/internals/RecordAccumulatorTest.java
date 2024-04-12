@@ -99,7 +99,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @State(Scope.Benchmark)
 @Fork(value = 1)
 @Warmup(iterations = 1)
-@Measurement(iterations = 2)
+@Measurement(iterations = 5)
 @BenchmarkMode({Mode.Throughput, Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class RecordAccumulatorTest {
