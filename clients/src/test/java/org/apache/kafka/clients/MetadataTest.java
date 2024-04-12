@@ -96,7 +96,7 @@ import static org.mockito.Mockito.verify;
 @Fork(value = 1)
 @Warmup(iterations = 1)
 @Measurement(iterations = 2)
-@BenchmarkMode(Mode.AverageTime)
+@BenchmarkMode({Mode.Throughput, Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class MetadataTest {
 
@@ -1325,7 +1325,6 @@ public class MetadataTest {
 
         // Setup 6 threads, where 3 are updating metadata & 3 are reading snapshot/cluster.
         // Metadata will be updated with higher # of nodes, partition-counts, leader-epoch.
-        // int numThreads = 6;
         ExecutorService service = Executors.newVirtualThreadPerTaskExecutor();
         CountDownLatch allThreadsDoneLatch = new CountDownLatch(numThreads);
         CountDownLatch atleastMetadataUpdatedOnceLatch = new CountDownLatch(1);

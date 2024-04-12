@@ -31,14 +31,14 @@ fi
 gradleCmd="${gradlew_dir}/gradlew"
 libDir="${base_dir}/build/libs"
 
-echo "running gradlew :clients:clean :clients:shadowJar"
+echo "running gradlew :clients:clean :clients:testJar2"
 
-$gradleCmd  :clients:clean :clients:shadowJar
+$gradleCmd  :clients:clean :clients:testJar2
 
 echo "gradle build done"
 
 echo "running JMH with args: $@"
 
-java -jar ${libDir}/kafka-clients-*.jar "$@"
+java -jar ${libDir}/kafka-clients-*.jar -rff jmh_results.csv -o jmh_results.txt "$@"
 
 echo "JMH benchmarks done"

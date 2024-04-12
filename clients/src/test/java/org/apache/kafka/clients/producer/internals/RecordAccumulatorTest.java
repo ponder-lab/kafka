@@ -100,14 +100,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Fork(value = 1)
 @Warmup(iterations = 1)
 @Measurement(iterations = 2)
-@BenchmarkMode(Mode.AverageTime)
+@BenchmarkMode({Mode.Throughput, Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class RecordAccumulatorTest {
 
     @Param({"10", "50", "100", "500", "1000", "5000", "10000"})
     private int numThreads;
-    @Param({"10000"})
-    private int msgs;
 
     private String topic = "test";
     private int partition1 = 0;
@@ -397,6 +395,7 @@ public class RecordAccumulatorTest {
     @Test
     @Benchmark
     public void testStressfulSituation() throws Exception {
+        final int msgs = 10000;
         final int numParts = 2;
         final RecordAccumulator accum = createTestRecordAccumulator(
             1024 + DefaultRecordBatch.RECORD_BATCH_OVERHEAD, 10 * 1024, CompressionType.NONE, 0);
